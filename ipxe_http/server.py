@@ -3,7 +3,7 @@
 from bottle import Bottle, request, route, run, response, template
 
 import socket
-from bootscript import Bootscript, BootscriptNotFound
+from .bootscript import Bootscript, BootscriptNotFound
 
 class Server:
     def __init__(self, host, port):
