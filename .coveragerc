@@ -2,7 +2,9 @@
 [run]
 branch = True
 omit=
-	ipxe_http/test_*.py
+	tests/*.py
+	setup.py
+	__init__.py
 
 [report]
 # Regexes for lines to exclude from consideration

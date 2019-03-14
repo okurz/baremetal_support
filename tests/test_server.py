@@ -1,7 +1,7 @@
 import pytest
 import socket
 
-from .server import Server
+from ipxe_http.server import Server
 
 def test_server():
     """ ensure the server can be instantiated """
