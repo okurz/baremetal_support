@@ -1,5 +1,5 @@
 import pytest
-from .bootscript import Bootscript, BootscriptNotFound
+from ipxe_http.bootscript import Bootscript, BootscriptNotFound
 
 def test_bootscript_set():
     """ test if the key is present after setting the value"""
