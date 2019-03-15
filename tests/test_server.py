@@ -2,6 +2,9 @@ import pytest
 import socket
 import requests
 
+import signal
+import pytest_cov.embed
+
 from multiprocessing import Process
 from time import sleep
 
@@ -17,6 +20,13 @@ use_ip = '10.0.0.1'
 
 url_bootscript = url + use_ip + '/script.ipxe'
 url_get = url + 'script.ipxe'
+
+
+def cleanup(*_):
+    pytest_cov.embed.cleanup()
+    sys.exit(1)
+
+signal.signal(signal.SIGTERM, cleanup)
 
 def server_task(arg):
     arg.start()
