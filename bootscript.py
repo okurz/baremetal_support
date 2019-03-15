@@ -16,4 +16,4 @@ class Bootscript:
         try:
             return self.bootscript[ip]
         except KeyError:
-            raise BootscriptNotFound("no script found for " + ip)
+            raise BootscriptNotFound("no script found for requested ip")

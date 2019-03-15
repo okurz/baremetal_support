@@ -16,8 +16,8 @@ class Server:
     def _route(self):
         # route methods for ipxe bootscript
         self._app.route('/script.ipxe',  method="GET",  callback = self.get_bootscript_for_peer)
-        self._app.route('/<ip>/script.ipxe',  method="POST", callback = self.set_bootscript)
-        self._app.route('/<ip>/script.ipxe',  method="GET", callback = self.get_bootscript)
+        self._app.route('/<addr>/script.ipxe',  method="POST", callback = self.set_bootscript)
+        self._app.route('/<addr>/script.ipxe',  method="GET", callback = self.get_bootscript)
 
     def start(self):
         self._app.run(host=self._host,  port=self._port, debug=True)
@@ -30,36 +30,30 @@ class Server:
 
 
     def get_bootscript_for_peer(self):
-        ip = self._to_ip(request.environ.get('REMOTE_ADDR'))
-        return self.get_bootscript(ip)
+        addr =request.environ.get('REMOTE_ADDR')
+        return self.get_bootscript(addr)
 
     def get_bootscript(self, addr):
         
         try:
             ip = self._to_ip(addr)
-            # TODO: replace print with proper logging
-            print("Serving for " + ip)
-            response.body = self._bootscript.get(ip)
             response.content_type = 'text/text; charset=utf-8'
+            ret = self._bootscript.get(ip)
+            return ret
+
         except socket.error:
             # invalid address specified
             response.status = 400
         except BootscriptNotFound:
             # no script found for this IP
             response.status = 404
-            
-
-        try:
-            return resp
-        except BootscriptNotFound:
-            response.status = 404
         
-    def set_bootscript(self, ip):
+    def set_bootscript(self, addr):
         try:
             ip = self._to_ip(addr)
             postdata = request.body.read()
             script = postdata.decode('utf-8')
-            self._bootscript.set(ipi, script)
+            self._bootscript.set(ip, script)
             response.status = 200
 
         except socket.error:
