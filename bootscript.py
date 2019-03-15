@@ -3,10 +3,11 @@ class BootscriptNotFound(Exception):
     """Raised when the address is invalid"""
     pass
 
+
 class Bootscript:
     def __init__(self):
         self.bootscript = {}
-    
+
     def set(self, ip, script):
         """ set the bootscript in the dict """
         self.bootscript.update({ip: script})
