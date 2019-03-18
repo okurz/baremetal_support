@@ -3,7 +3,7 @@
 from bottle import Bottle, request, route, run, response, template
 
 import socket
-from bootscript import Bootscript, BootscriptNotFound
+from ipxe_http.bootscript import Bootscript, BootscriptNotFound
 
 
 class Server:
