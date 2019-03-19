@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
 
 from bottle import Bottle, request, route, run, response, template
 
@@ -6,7 +6,7 @@ import socket
 from ipxe_http.bootscript import Bootscript, BootscriptNotFound
 
 
-class Server:
+class Ipxe_Http:
     def __init__(self, host, port):
         self._bootscript = Bootscript()
         self._host = host

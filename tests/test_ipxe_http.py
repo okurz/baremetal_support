@@ -8,7 +8,7 @@ import pytest_cov.embed
 from multiprocessing import Process
 from time import sleep
 
-from ipxe_http.server import Server
+from ipxe_http.ipxe_http import Ipxe_Http
 
 
 hostname = 'localhost'
@@ -32,8 +32,8 @@ def server_task(arg):
 
 def start_server():
     signal.signal(signal.SIGTERM, cleanup)
-    server = Server(hostname, port)
-    assert isinstance(server, Server)
+    server = Ipxe_Http(hostname, port)
+    assert isinstance(server, Ipxe_Http)
     p = Process(target=server_task, args=(server, ))
     p.start()
     sleep(1)
@@ -46,7 +46,7 @@ def stop_server(p):
 
 
 def test_name_to_ip_exception():
-    server = Server(hostname, port)
+    server = Ipxe_Http(hostname, port)
     with pytest.raises(socket.error):
         inval = server._to_ip("foobar")
 
