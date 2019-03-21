@@ -73,11 +73,12 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-l", "--listen", help="hostname to listen on - defaults to all")
-    parser.add_argument("-p", "--port", type=int, help="specify listening port - defaults to 8080")
+    parser.add_argument("-l", "--listen",
+                        help="hostname to listen on - defaults to all")
+    parser.add_argument("-p", "--port",
+                        type=int, help="specify listening port - defaults to 8080")
 
     args = parser.parse_args()
-
 
     if args.port:
         port = args.port
