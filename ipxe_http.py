@@ -3,7 +3,7 @@
 from bottle import Bottle, request, route, run, response, template
 
 import socket
-from ipxe_http.bootscript import Bootscript, BootscriptNotFound
+from .bootscript import Bootscript, BootscriptNotFound
 
 
 class Ipxe_Http:
@@ -68,5 +68,5 @@ class Ipxe_Http:
 
 
 if __name__ == "__main__":
-    server = Server(host='0.0.0.0', port='8080')
+    server = Ipxe_Http(host='0.0.0.0', port='8080')
     server.start()

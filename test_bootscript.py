@@ -1,5 +1,5 @@
 import pytest
-from ipxe_http.bootscript import Bootscript, BootscriptNotFound
+from .bootscript import Bootscript, BootscriptNotFound
 
 
 def test_bootscript_set():

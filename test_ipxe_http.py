@@ -8,7 +8,7 @@ import pytest_cov.embed
 from multiprocessing import Process
 from time import sleep
 
-from ipxe_http.ipxe_http import Ipxe_Http
+from .ipxe_http import Ipxe_Http
 
 
 hostname = 'localhost'
