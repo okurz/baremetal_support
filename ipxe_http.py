@@ -4,7 +4,7 @@ from bottle import Bottle, request, route, run, response, template
 import argparse
 import socket
 
-from .bootscript import Bootscript, BootscriptNotFound
+from bootscript import Bootscript, BootscriptNotFound
 
 
 class Ipxe_Http:
