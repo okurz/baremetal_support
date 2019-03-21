@@ -10,7 +10,6 @@ from time import sleep
 
 from .ipxe_http import Ipxe_Http
 
-
 hostname = 'localhost'
 port = '1234'
 

@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
 from bottle import Bottle, request, route, run, response, template
-
+import argparse
 import socket
+
 from .bootscript import Bootscript, BootscriptNotFound
 
 
