@@ -76,7 +76,8 @@ if __name__ == "__main__":
     parser.add_argument("-l", "--listen",
                         help="hostname to listen on - defaults to all")
     parser.add_argument("-p", "--port",
-                        type=int, help="specify listening port - defaults to 8080")
+                        type=int,
+                        help="specify listening port - defaults to 8080")
 
     args = parser.parse_args()
 
