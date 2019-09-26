@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+import setuptools
 
 
 with open('README.rst') as f:
@@ -7,8 +7,8 @@ with open('README.rst') as f:
 with open('LICENSE') as f:
     license = f.read()
 
-setup(
-    name='ipxe_http',
+setuptools.setup(
+    name='baremetal_support',
     version='0.1.0',
     description='iPXE http server for chainloaded bootscripts',
     long_description=readme,
@@ -16,5 +16,5 @@ setup(
     author_email='mmoese@suse.de',
     url='https://github.com/frankenmichl/ipxe_http',
     license=license,
-    packages=find_packages(exclude=('tests', 'docs'))
+    packages='baremetal_support'
 )
