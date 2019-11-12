@@ -1,5 +1,6 @@
 # A HTTP server for dynamic iPXE boot control
-
+[![Build Status](https://travis-ci.com/frankenmichl/baremetal_support.svg?branch=master)](https://travis-ci.com/frankenmichl/baremetal_support)
+[![codecov](https://codecov.io/gh/frankenmichl/baremetal_support/branch/master/graph/badge.svg)](https://codecov.io/gh/frankenmichl/baremetal_support)
 ## Running
 
 Prior to doing anyting. some preparation is needed: 
