@@ -9,6 +9,6 @@ test:
 	pycodestyle tests/test_bootscript.py
 	pycodestyle tests/test_lock.py
 	pycodestyle tests/test_bootscript.py
-	py.test --cov-report term-missing --cov=baremetal_support tests/
+	py.test --cov-report=term --cov=baremetal_support tests/
 
 .PHONY: init test
