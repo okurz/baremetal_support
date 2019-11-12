@@ -1,3 +1,6 @@
+# Copyright (C) 2019 SUSE LLC
+# SPDX-License-Identifier: GPL-3.0
+
 import pytest
 import requests
 import socket
