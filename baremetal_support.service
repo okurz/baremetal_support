@@ -1,0 +1,12 @@
+# package me into /usr/lib/systemd/system
+[Unit]
+Description=The Baremetal Support Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/baremetal_support/baremetal_support.py
+
+[Install]
+WantedBy=multi-user.target
+
