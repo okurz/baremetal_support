@@ -56,7 +56,7 @@ if __name__ == "__main__":
         port = args.port
 
     if args.listen:
-        host - args.listen
+        host = args.listen
 
     server = Baremetal_Support(host=host, port=port)
     server.start()
