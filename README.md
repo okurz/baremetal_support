@@ -1,6 +1,11 @@
-# A HTTP server for dynamic iPXE boot control
+# A support service for baremetal testing 
 [![Build Status](https://travis-ci.com/frankenmichl/baremetal_support.svg?branch=master)](https://travis-ci.com/frankenmichl/baremetal_support)
 [![codecov](https://codecov.io/gh/frankenmichl/baremetal_support/branch/master/graph/badge.svg)](https://codecov.io/gh/frankenmichl/baremetal_support)
+
+While this is designed to work with openQA, this service has not dependencies
+to openQA. However, it may be of limited use without being used with an openQA
+instance.
+
 ## Running
 
 Prior to doing anyting. some preparation is needed: 
