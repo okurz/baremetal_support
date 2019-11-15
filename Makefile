@@ -3,11 +3,11 @@ init:
 	pip install -r requirements.txt
 
 test:
-	pycodestyle baremetal_support.py
-	pycodestyle bootscript.py
-	pycodestyle lock.py
+	pycodestyle baremetal_support/baremetal_support.py
+	pycodestyle baremetal_support/bootscript.py
+	pycodestyle baremetal_support/lock.py
 	pycodestyle tests/test_bootscript.py
-	pycodestyle tests/test_lock.py
+	pycodestyle tests/test_host_lock.py
 	pycodestyle tests/test_bootscript.py
 	py.test --cov-report=term --cov=baremetal_support tests/
 

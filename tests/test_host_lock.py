@@ -5,8 +5,7 @@ from bottle import Bottle
 from pytest import raises
 import time
 
-from baremetal_support.lock import Host_Lock, HostNotLocked, HostAlreadyLocked
-
+from baremetal_support.lock import Host_Lock, HostAlreadyLocked, HostNotLocked
 
 host0 = "10.0.0.1"
 host1 = "10.0.0.2"
