@@ -1,4 +1,4 @@
-#/usr/bin/python
+#!/usr/bin/python
 import argparse
 
 from baremetal_support.baremetal_support import Baremetal_Support
