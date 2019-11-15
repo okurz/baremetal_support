@@ -1,7 +1,7 @@
 # Copyright (C) 2019 SUSE LLC
 # SPDX-License-Identifier: GPL-3.0
 
-from bottle import Bottle, request, response
+import bottle
 import socket
 
 
@@ -43,32 +43,32 @@ class Bootscript:
             raise
 
     def http_get_bootscript_for_peer(self):
-        addr = request.environ.get('REMOTE_ADDR')
+        addr = bottle.request.environ.get('REMOTE_ADDR')
         return self.http_get_bootscript(addr)
 
     def http_get_bootscript(self, addr):
         try:
             ip = self._to_ip(addr)
-            response.content_type = 'text/text; charset=utf-8'
+            bottle.response.content_type = 'text/text; charset=utf-8'
             return self.get(ip)
 
         except socket.error:
             # invalid address specified
-            response.status = 400
+            bottle.response.status = 400
         except BootscriptNotFound:
             # no script found for this IP
-            response.body = 'not found'
-            response.status = '404 Not Found'
-            return response
+            bottle.response.body = 'not found'
+            bottle.response.status = '404 Not Found'
+            return bottle.response
 
     def http_set_bootscript(self, addr):
         try:
             ip = self._to_ip(addr)
-            postdata = request.body.read()
+            postdata = bottle.request.body.read()
             script = postdata.decode('utf-8')
             self.set(ip, script)
-            response.status = 200
+            bottle.response.status = 200
 
         except socket.error:
             # invalid address specified
-            response.status = 400
+            bottle.response.status = 400

@@ -1,5 +1,6 @@
 # Copyright (C) 2019 SUSE LLC
 # SPDX-License-Identifier: GPL-3.0
+import sys
 
 import pytest
 import requests
@@ -13,6 +14,7 @@ from time import sleep
 
 from baremetal_support.baremetal_support import Baremetal_Support
 
+
 def cleanup(*_):
     pytest_cov.embed.cleanup()
     sys.exit(1)
@@ -21,8 +23,8 @@ def cleanup(*_):
 def server_task(arg):
     arg.start()
 
-def test_baremetal_support():
 
+def test_baremetal_support():
     hostname = 'localhost'
     port = '23456'
 
@@ -41,13 +43,12 @@ def test_baremetal_support():
     url_lock_timeout = url + 'host_lock/lock/' + use_ip + '/10'
     url_unlock = url + 'host_lock/lock/' + use_ip
 
-
     text = "data foo bar"
 
     server = Baremetal_Support(hostname, port)
     signal.signal(signal.SIGTERM, cleanup)
     assert isinstance(server, Baremetal_Support)
-    p = Process(target=server_task, args=(server, ))
+    p = Process(target=server_task, args=(server,))
     p.start()
     sleep(1)
 
@@ -60,7 +61,7 @@ def test_baremetal_support():
 
     r2 = requests.get(err_url)
     assert r2.status_code == 400
-  
+
     r3 = requests.get(err_url2)
     assert r3.status_code == 404
     assert r3.text == 'not found'
@@ -117,11 +118,11 @@ def test_baremetal_support():
     assert r16.status_code == 200
     assert r16.text == 'unlocked'
 
-    r17 =  requests.get(url_lock)
+    r17 = requests.get(url_lock)
     assert r17.status_code == 200
     assert r17.text == 'ok'
 
-    r18 =  requests.get(url_lock)
+    r18 = requests.get(url_lock)
     assert r18.status_code == 412
 
     r19 = requests.put(url_unlock)
@@ -137,4 +138,4 @@ def test_baremetal_support():
 
     p.terminate()
     p.join()
-    
+

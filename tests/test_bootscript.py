@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0
 
 from bottle import Bottle
-from unittest import TestCase
 from pytest import raises
 
 from baremetal_support.bootscript import Bootscript, BootscriptNotFound
