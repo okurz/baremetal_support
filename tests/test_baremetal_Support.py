@@ -89,13 +89,14 @@ def test_baremetal_support():
 
     r10 = requests.get(url_lock)
     assert r10.status_code == 200
-    assert r10.text == 'ok'
+    token = r10.text
 
     r11 = requests.get(url_status)
     assert r11.status_code == 200
     assert r11.text == 'locked'
 
-    r12 = requests.put(url_unlock)
+    url_unlock2 = url_unlock + '/' + token
+    r12 = requests.put(url_unlock2)
     assert r12.status_code == 200
     assert r12.text == 'ok'
 
@@ -106,7 +107,7 @@ def test_baremetal_support():
     print(url_lock_timeout)
     r14 = requests.get(url_lock_timeout)
     assert r14.status_code == 200
-    assert r14.text == 'ok'
+    assert r14.text != ''
 
     r15 = requests.get(url_status)
     assert r15.status_code == 200
@@ -120,21 +121,25 @@ def test_baremetal_support():
 
     r17 = requests.get(url_lock)
     assert r17.status_code == 200
-    assert r17.text == 'ok'
+    token = r17.text
 
     r18 = requests.get(url_lock)
     assert r18.status_code == 412
 
-    r19 = requests.put(url_unlock)
-    assert r19.status_code == 200
-    assert r19.text == 'ok'
+    r19 = requests.put(url_unlock + '/0xdeadbeefcafebabe')
+    assert r19.status_code == 403
 
-    r20 = requests.get(url_status)
+    url_unlock3 = url_unlock + '/' + token
+    r20 = requests.put(url_unlock3)
     assert r20.status_code == 200
-    assert r20.text == 'unlocked'
+    assert r20.text == 'ok'
 
-    r21 = requests.put(url_unlock)
-    assert r21.status_code == 412
+    r21 = requests.get(url_status)
+    assert r21.status_code == 200
+    assert r21.text == 'unlocked'
+
+    r22 = requests.put(url_unlock3)
+    assert r22.status_code == 412
 
     p.terminate()
     p.join()

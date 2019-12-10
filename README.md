@@ -50,9 +50,11 @@ All parameters in this documentation are surrounded by <>.
 ### Lock related API
 #### /v1/host_lock/lock/<addr>
 - GET
-  take the lock if possible. If the host is already locked, HTTP status 412 is
-  returned
+  take the lock if possible and return a token in the response body.
+  If the host is already locked, HTTP status 412 is returned. 
+#### /v1/host_lock/lock/<addr>/<token>
 - PUT
+  token is retrieved when locking, this needs to be passed to the unlock.
   free the lock. If it is not locked, HTTP status 412 signals the error.
 #### /v1/host_lock/lock_state/<addr>
 - GET
