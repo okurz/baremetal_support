@@ -16,8 +16,9 @@ def test_my_timer():
     locks = Host_Lock(app)
 
     assert not locks.is_locked(host0)
-    locks.lock_host(host0, 6)
+    token = locks.lock_host(host0, 6)
     assert locks.is_locked(host0)
+    assert token != ''
     time.sleep(2)
     assert locks.is_locked(host0)
     time.sleep(9)
@@ -32,21 +33,21 @@ def test_is_locked():
     assert not locks.is_locked(host0)
     assert not locks.is_locked(host1)
 
-    locks.lock_host(host0)
+    token = locks.lock_host(host0)
     assert locks.is_locked(host0)
     assert locks.locks[host0]
     print(locks.locks[host0])
     assert not locks.is_locked(host1)
 
-    locks.lock_host(host1)
+    token2 = locks.lock_host(host1)
     assert locks.is_locked(host0)
     assert locks.is_locked(host1)
 
-    locks.unlock_host(host0)
+    locks.unlock_host(host0, token)
     assert not locks.is_locked(host0)
     assert locks.is_locked(host1)
 
-    locks.unlock_host(host1)
+    locks.unlock_host(host1, token2)
     assert not locks.is_locked(host0)
     assert not locks.is_locked(host1)
 
@@ -61,9 +62,9 @@ def test_lock_host():
 def test_unlock_host():
     app = Bottle()
     locks = Host_Lock(app)
-    locks.lock_host(host1)
+    token = locks.lock_host(host1)
     assert locks.locks[host1]
-    locks.unlock_host(host1)
+    locks.unlock_host(host1, token)
     assert not locks.locks[host1]
 
 
@@ -72,13 +73,13 @@ def test_lock_already_locked():
     locks = Host_Lock(app)
 
     assert not locks.is_locked(host0)
-    locks.lock_host(host0)
+    token = locks.lock_host(host0)
     assert locks.is_locked(host0)
 
     with raises(HostAlreadyLocked):
         locks.lock_host(host0)
 
-    locks.unlock_host(host0)
+    locks.unlock_host(host0, token)
     locks.lock_host(host0)
 
     with raises(HostAlreadyLocked):
@@ -91,4 +92,4 @@ def test_unlock_unlocked():
 
     assert not locks.is_locked(host0)
     with raises(HostNotLocked):
-        locks.unlock_host(host0)
+        locks.unlock_host(host0, '')

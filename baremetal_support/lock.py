@@ -1,7 +1,8 @@
 # Copyright (C) 2019 SUSE LLC
 # SPDX-License-Identifier: GPL-3.0
 
-from bottle import Bottle, request, response
+from bottle import request, response
+import uuid
 from threading import Lock, Timer
 
 
@@ -12,6 +13,10 @@ class HostAlreadyLocked(Exception):
 
 class HostNotLocked(Exception):
     """host cannot be unlocked because it is not locked"""
+
+
+class NotLockOwner(Exception):
+    """host is locked by someone else"""
 
 
 class Host_Lock:
@@ -27,7 +32,7 @@ class Host_Lock:
         self._app.route('/v1/host_lock/lock/<addr>/<timeout:int>',
                         method="GET",
                         callback=self.http_lock)
-        self._app.route('/v1/host_lock/lock/<addr>',
+        self._app.route('/v1/host_lock/lock/<addr>/<token>',
                         method="PUT",
                         callback=self.http_unlock)
         self._app.route('/v1/host_lock/lock_state/<addr>',
@@ -35,12 +40,16 @@ class Host_Lock:
                         callback=self.http_lock_state)
 
     def my_timer(self, host):
-        self.unlock_host(host)
+        self.unlock_host(host, '', True)
 
     def is_locked(self, host):
         self.mutex.acquire()
+
         try:
-            ret = self.locks[host]
+            if self.locks[host] != '':
+                ret = True
+            else:
+                ret = False
         except KeyError:
             ret = False
         finally:
@@ -50,10 +59,11 @@ class Host_Lock:
     def lock_host(self, host, timeout=0):
         self.mutex.acquire()
 
-        if host not in self.locks:
-            self.locks[host] = True
-        elif not self.locks[host]:
-            self.locks[host] = True
+        token = ''
+
+        if host not in self.locks or self.locks[host] == '':
+            token = uuid.uuid4().hex
+            self.locks[host] = token
         else:
             self.mutex.release()
             raise HostAlreadyLocked("Host is already locked")
@@ -63,38 +73,46 @@ class Host_Lock:
             self.timeouts[host].start()
 
         self.mutex.release()
+        return token
 
-    def unlock_host(self, host):
+    def unlock_host(self, host, token, force=False):
+        if not self.is_locked(host):
+            raise HostNotLocked("Host is not locked")
+
         self.mutex.acquire()
 
-        if host in self.locks and self.locks[host]:
-            self.locks[host] = False
+        if force or self.locks[host] == token:
+            self.locks[host] = ''
             if host in self.timeouts:
                 self.timeouts[host].cancel()
                 del self.timeouts[host]
         else:
             self.mutex.release()
-            raise HostNotLocked("Host is not locked")
+            raise NotLockOwner("host is locked by another host")
 
         self.mutex.release()
 
     def http_lock(self, addr, timeout=0):
         response.content_type = 'text/text; charset=utf-8'
         try:
-            self.lock_host(addr, timeout)
+            token = self.lock_host(addr, timeout)
             response.status = 200
-            response.body = "ok"
+            response.body = token
             return response
         except HostAlreadyLocked:
             response.status = 412
 
-    def http_unlock(self, addr):
+    def http_unlock(self, addr, token):
         response.content_type = 'text/text; charset=utf-8'
         try:
-            self.unlock_host(addr)
+            self.unlock_host(addr, token, False)
             response.body = "ok"
         except HostNotLocked:
             response.status = 412
+            response.body = "the host is not locked"
+        except NotLockOwner:
+            response.status = 403
+            response.body = "you are not the owner of the lock"
         return response
 
     def http_lock_state(self, addr):
