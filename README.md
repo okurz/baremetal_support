@@ -13,7 +13,8 @@ Prior to doing anyting. some preparation is needed:
 ```bash
  git clone https://github.com/frankenmichl/baremetal_support.git
  cd baremetal_support
- virtualenv virtualenv
+ python3 -m venv venv
+ . venv/bin/activate
  make init
 ```
 
