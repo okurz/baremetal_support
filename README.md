@@ -11,8 +11,8 @@ instance.
 Prior to doing anyting. some preparation is needed: 
 
 ```bash
- git clone https://github.com/frankenmichl/ipxe_http.git
- cd ipxe_http
+ git clone https://github.com/frankenmichl/baremetal_support.git
+ cd baremetal_support
  virtualenv virtualenv
  make init
 ```
