@@ -27,6 +27,7 @@ def server_task(arg):
 def test_baremetal_support():
     hostname = 'localhost'
     port = '23456'
+    instance = "http://openqa.opensuse.org"
 
     url = 'http://' + hostname + ':' + port + '/v1/'
     use_ip = '10.0.0.1'
@@ -43,9 +44,12 @@ def test_baremetal_support():
     url_lock_timeout = url + 'host_lock/lock/' + use_ip + '/10'
     url_unlock = url + 'host_lock/lock/' + use_ip
 
+    url_jobid_good = url + 'latest_job/x86_64/opensuse/DVD/Tumbleweed/create_hdd_textmode'
+    url_jobid_bad = url + 'latest_job/MIPS/Gentoo/hardened/1.0/install_foobar'
+
     text = "data foo bar"
 
-    server = Baremetal_Support(hostname, port)
+    server = Baremetal_Support(hostname, port, instance)
     signal.signal(signal.SIGTERM, cleanup)
     assert isinstance(server, Baremetal_Support)
     p = Process(target=server_task, args=(server,))
@@ -140,6 +144,14 @@ def test_baremetal_support():
 
     r22 = requests.put(url_unlock3)
     assert r22.status_code == 412
+
+    # tests for jobid.py
+    r23 = requests.get(url_jobid_good)
+    assert r23.status_code == 200
+    assert r23.text != ""
+
+    r24 = requests.get(url_jobid_bad)
+    assert r24.status_code != 200
 
     p.terminate()
     p.join()

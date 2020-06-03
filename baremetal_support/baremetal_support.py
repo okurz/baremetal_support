@@ -4,19 +4,22 @@ from bottle import Bottle
 
 from .bootscript import Bootscript
 from .lock import Host_Lock
+from . jobid import LatestJob
 
 if __name__ == "__main__":
     import argparse
 
 
 class Baremetal_Support:
-    def __init__(self, host, port):
+    def __init__(self, host, port, instance):
         self._host = host
         self._port = port
+        self._instance = instance
         self._app = Bottle()
 
         self._bootscript = Bootscript(self._app)
         self._locks = Host_Lock(self._app)
+        self._latest_job = LatestJob(self._app, self._instance)
 
         self._route()
 

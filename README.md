@@ -2,10 +2,6 @@
 [![Build Status](https://travis-ci.com/frankenmichl/baremetal_support.svg?branch=master)](https://travis-ci.com/frankenmichl/baremetal_support)
 [![codecov](https://codecov.io/gh/frankenmichl/baremetal_support/branch/master/graph/badge.svg)](https://codecov.io/gh/frankenmichl/baremetal_support)
 
-While this is designed to work with openQA, this service has not dependencies
-to openQA. However, it may be of limited use without being used with an openQA
-instance.
-
 ## Running
 
 Prior to doing anyting. some preparation is needed: 
@@ -18,8 +14,22 @@ Prior to doing anyting. some preparation is needed:
  make init
 ```
 
-To start the server, just run ```pythin server.py```.
-Hit C-c to exit.
+To get some usage instructions, just run:  
+```
+# ./baremetal_support.py --help
+usage: baremetal_support.py [-h] [-l LISTEN] [-p PORT] [-i INSTANCE]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -l LISTEN, --listen LISTEN
+                        hostname to listen on - defaults to all
+  -p PORT, --port PORT  specify listening port - defaults to 8080
+  -i INSTANCE, --instance INSTANCE
+                        specify openQA instance - defaults to http://openqa.suse.de
+```
+
+You can also use the included systemd service file baremetal_support.service
+or retrieve a package from https://build.opensuse.org/project/show/home:MMoese:baremetal_support
 
 ## Running the tests
 
@@ -61,3 +71,13 @@ All parameters in this documentation are surrounded by <>.
 - GET
   retrieve the lock status of <addr>. Returned in the body as _locked_ or
   _unlocked_
+
+### Job-ID related API
+#### v1/latest_job/<arch>/<distri>/<flavor>/<version>/<test>
+- GET
+  retrieve the latest jobid from the connected openQA-instance in the request
+  body. All variables are mandatory here.
+  Example:  
+    v1/latest_job/x86_64/sle/Online/15-SP2/create_hdd_minimal_base+sdk 
+  On error, HTTP status 404 is returned.
+
