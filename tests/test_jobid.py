@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0
 
 from bottle import Bottle
-from pytest import raises, skip
+import pytest
+from pytest import raises
 import requests
 
 from baremetal_support.jobid import LatestJob, LatestJobNotFound
@@ -14,7 +15,7 @@ def test_exception():
         reachable = requests.get(instance)
     except Exception:
         pytest.skip("instance unreachable")
-        
+
     app = Bottle()
     lj = LatestJob(app, instance)
 
@@ -26,6 +27,7 @@ def test_exception():
     filter['test'] = 'install_gentoo_mips'
     with raises(LatestJobNotFound):
         res = lj.get_latest_job(filter)
+
 
 def test_get():
     instance = 'http://openqa.opensuse.org'
