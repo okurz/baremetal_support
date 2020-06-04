@@ -156,6 +156,10 @@ def test_baremetal_support():
         assert r24.status_code != 200
     except Exception:
         pytest.skip("instance unreachable")
+        p.terminate()
+        p.join()
+
+
 
     p.terminate()
     p.join()
