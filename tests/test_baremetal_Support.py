@@ -14,6 +14,11 @@ from time import sleep
 
 from baremetal_support.baremetal_support import Baremetal_Support
 
+hostname = 'localhost'
+port = '23456'
+instance = "http://openqa.opensuse.org"
+url = 'http://' + hostname + ':' + port + '/v1/'
+
 
 def cleanup(*_):
     pytest_cov.embed.cleanup()
@@ -25,11 +30,6 @@ def server_task(arg):
 
 
 def test_baremetal_support():
-    hostname = 'localhost'
-    port = '23456'
-    instance = "http://openqa.opensuse.org"
-
-    url = 'http://' + hostname + ':' + port + '/v1/'
     use_ip = '10.0.0.1'
 
     url_bootscript = url + 'bootscript/script.ipxe/' + use_ip
@@ -43,9 +43,6 @@ def test_baremetal_support():
     url_lock = url + 'host_lock/lock/' + use_ip
     url_lock_timeout = url + 'host_lock/lock/' + use_ip + '/10'
     url_unlock = url + 'host_lock/lock/' + use_ip
-
-    url_jobid_good = url + 'latest_job/x86_64/opensuse/DVD/Tumbleweed/create_hdd_textmode'
-    url_jobid_bad = url + 'latest_job/MIPS/Gentoo/hardened/1.0/install_foobar'
 
     text = "data foo bar"
 
@@ -145,22 +142,39 @@ def test_baremetal_support():
     r22 = requests.put(url_unlock3)
     assert r22.status_code == 412
 
-    # tests for jobid.py
-    try:
-        reachable = requests.get(instance)
-        r23 = requests.get(url_jobid_good)
-        assert r23.status_code == 200
-        assert r23.text != ""
-
-        r24 = requests.get(url_jobid_bad)
-        assert r24.status_code != 200
-    except Exception:
-        pytest.skip("instance unreachable")
-        p.terminate()
-        p.join()
-
+    
 
 
     p.terminate()
     p.join()
+
+
+
+def test_online_required():
+
+    url_jobid_good = url + 'latest_job/x86_64/opensuse/DVD/Tumbleweed/create_hdd_textmode'
+    url_jobid_bad = url + 'latest_job/MIPS/Gentoo/hardened/1.0/install_foobar'
+
+    server = Baremetal_Support(hostname, port, instance)
+    signal.signal(signal.SIGTERM, cleanup)
+    assert isinstance(server, Baremetal_Support)
+    p = Process(target=server_task, args=(server,))
+    p.start()
+    sleep(1)
+
+    # tests for jobid.py
+    try:
+        reachable = requests.get(instance)
+        r = requests.get(url_jobid_good)
+        assert r.status_code == 200
+        assert r.text != ""
+
+        r = requests.get(url_jobid_bad)
+        assert r.status_code != 200
+    except Exception:
+        pytest.skip("instance unreachable")
+    finally: 
+        p.terminate()
+        p.join()
+
 
