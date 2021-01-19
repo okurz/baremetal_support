@@ -21,6 +21,14 @@ def test_set():
     bs.set("10.0.0.1", "bar")
     assert bs.get("10.0.0.1") == "bar"
 
+    count = 0
+    while (count < 1000000):
+        bs.set("10.0.0.1", "bar")
+        bs.set("10.0.0.2", "foobar")
+        assert bs.get("10.0.0.1") == "bar"
+        assert bs.get("10.0.0.2") == "foobar"
+        count = count + 1
+
 
 def test_get():
     app = Bottle()

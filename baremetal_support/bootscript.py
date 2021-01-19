@@ -26,7 +26,7 @@ class Bootscript:
 
     def set(self, ip, script):
         """ set the bootscript in the dict """
-        self.bootscript.update({ip: script})
+        self.bootscript[ip] = script
 
     def get(self, ip):
         """ return specific bootscript """
@@ -35,12 +35,12 @@ class Bootscript:
         except KeyError:
             raise BootscriptNotFound("no script found for requested ip")
 
-    def _to_ip(self, addr):
-        """ convert an address/IP to an IP """
+    def _is_ip(self, addr):
         try:
-            addr = socket.inet_aton(addr)
-        except Exception as e:
-            raise
+            socket.inet_aton(addr)
+            return True
+        except socket.error:
+            return False
 
     def http_get_bootscript_for_peer(self):
         addr = bottle.request.environ.get('REMOTE_ADDR')
@@ -48,13 +48,12 @@ class Bootscript:
 
     def http_get_bootscript(self, addr):
         try:
-            ip = self._to_ip(addr)
-            bottle.response.content_type = 'text/text; charset=utf-8'
-            return self.get(ip)
-
-        except socket.error:
-            # invalid address specified
-            bottle.response.status = 400
+            if self._is_ip(addr):
+                bottle.response.content_type = 'text/text; charset=utf-8'
+                return self.get(addr)
+            else:
+                # invalid address specified
+                bottle.response.status = 400
         except BootscriptNotFound:
             # no script found for this IP
             bottle.response.body = 'not found'
@@ -62,13 +61,11 @@ class Bootscript:
             return bottle.response
 
     def http_set_bootscript(self, addr):
-        try:
-            ip = self._to_ip(addr)
+        print("GET: " + addr)
+        if self._is_ip(addr):
             postdata = bottle.request.body.read()
             script = postdata.decode('utf-8')
-            self.set(ip, script)
+            self.set(addr, script)
             bottle.response.status = 200
-
-        except socket.error:
-            # invalid address specified
+        else:
             bottle.response.status = 400
