@@ -50,4 +50,4 @@ class LatestJob:
             return str(result)
         except LatestJobNotFound:
             bottle.response.body = 'not found'
-            bootle.respons.status = '404 Not Found'
+            bottle.response.status = '404 Not Found'

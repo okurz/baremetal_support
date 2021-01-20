@@ -53,8 +53,8 @@ def test_baremetal_support():
     p.start()
     sleep(1)
 
-    with pytest.raises(socket.error):
-        inval = server._bootscript._to_ip("foobar")
+    assert not server._bootscript._is_ip("foobar")
+
 
     # request bootscript api
     r1 = requests.post(err_url, data='illegal')
@@ -142,9 +142,35 @@ def test_baremetal_support():
     r22 = requests.put(url_unlock3)
     assert r22.status_code == 412
 
-    
+    # this test verifies issue #19
+    url_bootscript1 = url + 'bootscript/script.ipxe/10.0.0.1'
+    url_bootscript2 = url + 'bootscript/script.ipxe/10.0.0.2'
+    count = 0
+    bootscript1 = "bootscript1"
+    bootscript2 = "bootscript2"
+    while (count < 1000):
+        print("count: " + str(count));
 
+        r30 = requests.post(url_bootscript1, data=bootscript1)
+        assert r30.status_code == 200
 
+        r31 = requests.get(url_bootscript1)
+        assert r31.status_code == 200
+        assert r31.text == bootscript1, "after "
+
+        r32 = requests.post(url_bootscript2, data=bootscript2)
+        assert r32.status_code == 200
+
+        r33 = requests.get(url_bootscript1)
+        assert r33.status_code == 200
+        assert r33.text == bootscript1, "after " + str(count)
+
+        r34 = requests.get(url_bootscript2)
+        assert r34.status_code == 200
+        assert r34.text == bootscript2
+
+        count = count + 1
+ 
     p.terminate()
     p.join()
 

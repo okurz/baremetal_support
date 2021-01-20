@@ -11,6 +11,6 @@ test:
 	pycodestyle tests/test_host_lock.py
 	pycodestyle tests/test_bootscript.py
 	pycodestyle tests/test_jobid.py
-	py.test --cov-report=term --cov=baremetal_support tests/
+	py.test -s --cov-report=term --cov=baremetal_support tests/ 
 
 .PHONY: init test
