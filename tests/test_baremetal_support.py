@@ -25,9 +25,15 @@ def cleanup(*_):
     sys.exit(1)
 
 
-def server_task(arg):
-    arg.start()
+def server_task():
+    server = Baremetal_Support(hostname, port, instance)
+    signal.signal(signal.SIGTERM, cleanup)
+    assert isinstance(server, Baremetal_Support)
+    server.start()
 
+def test_baremetal_support_methods():
+    server = Baremetal_Support(hostname, port, instance)
+    assert not server._bootscript._is_ip("foobar")
 
 def test_baremetal_support():
     use_ip = '10.0.0.1'
@@ -46,14 +52,11 @@ def test_baremetal_support():
 
     text = "data foo bar"
 
-    server = Baremetal_Support(hostname, port, instance)
-    signal.signal(signal.SIGTERM, cleanup)
-    assert isinstance(server, Baremetal_Support)
-    p = Process(target=server_task, args=(server,))
+    p = Process(target=server_task, args=())
     p.start()
     sleep(1)
 
-    assert not server._bootscript._is_ip("foobar")
+
 
 
     # request bootscript api
@@ -184,7 +187,7 @@ def test_online_required():
     server = Baremetal_Support(hostname, port, instance)
     signal.signal(signal.SIGTERM, cleanup)
     assert isinstance(server, Baremetal_Support)
-    p = Process(target=server_task, args=(server,))
+    p = Process(target=server_task, args=())
     p.start()
     sleep(1)
 
