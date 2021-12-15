@@ -20,11 +20,12 @@ class NotLockOwner(Exception):
 
 
 class Host_Lock:
-    def __init__(self, app):
+    def __init__(self, app, logger):
         self.locks = {}
         self.timeouts = {}
         self.mutex = Lock()
         self._app = app
+        self.log = logger
 
         self._app.route('/v1/host_lock/lock/<addr>',
                         method="GET",
@@ -40,6 +41,7 @@ class Host_Lock:
                         callback=self.http_lock_state)
 
     def my_timer(self, host):
+        self.log.warn("Timer expired, unlocking " + host)
         self.unlock_host(host, '', True)
 
     def is_locked(self, host):
@@ -48,9 +50,12 @@ class Host_Lock:
         try:
             if self.locks[host] != '':
                 ret = True
+                self.log.info("Host " + host + " is locked")
             else:
                 ret = False
+                self.log.info("Host " + host + " is not locked")
         except KeyError:
+            self.log.info("Host " + host + " is locked")
             ret = False
         finally:
             self.mutex.release()
@@ -64,11 +69,16 @@ class Host_Lock:
         if host not in self.locks or self.locks[host] == '':
             token = uuid.uuid4().hex
             self.locks[host] = token
+            self.log.info("lock_host: Locking host " + host
+                          + " with token " + token)
         else:
             self.mutex.release()
+            self.log.info("lock_host: Host " + host + "is already locked")
             raise HostAlreadyLocked("Host is already locked")
 
         if timeout > 0:
+            self.log.info("lock_host: setting lock timeout for " + host
+                          + " to " + str(timeout))
             self.timeouts[host] = Timer(timeout, self.my_timer, [host])
             self.timeouts[host].start()
 
@@ -77,17 +87,21 @@ class Host_Lock:
 
     def unlock_host(self, host, token, force=False):
         if not self.is_locked(host):
+            self.log.error("unlock_host: Host " + host + " is not locked")
             raise HostNotLocked("Host is not locked")
 
         self.mutex.acquire()
 
         if force or self.locks[host] == token:
             self.locks[host] = ''
+            self.log.info("unlock_host: unlocking " + host)
             if host in self.timeouts:
                 self.timeouts[host].cancel()
                 del self.timeouts[host]
+                self.log.info("unlock_host: cancelling timer for " + host)
         else:
             self.mutex.release()
+            self.log.error("unlock_host: Host " + host + " is already locked")
             raise NotLockOwner("host is locked by another host")
 
         self.mutex.release()

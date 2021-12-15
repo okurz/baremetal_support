@@ -5,17 +5,20 @@ from bottle import Bottle
 from pytest import raises
 
 from baremetal_support.bootscript import Bootscript, BootscriptNotFound
+from baremetal_support.logging import Logging
+
+logger = Logging("baremetal support", "DEBUG")
 
 
 def test_set():
     app = Bottle()
     # test if the key is present after setting the value
-    bs = Bootscript(app)
+    bs = Bootscript(app, logger)
     bs.set("10.0.0.1", "foo")
     assert "10.0.0.1" in bs.bootscript
 
     # overwrite a value and make sure it can be read
-    bs = Bootscript(app)
+    bs = Bootscript(app, logger)
     bs.set("10.0.0.1", "foo")
     assert bs.get("10.0.0.1") == "foo"
     bs.set("10.0.0.1", "bar")
@@ -33,7 +36,7 @@ def test_set():
 def test_get():
     app = Bottle()
     # retrieve value after setting it
-    bs = Bootscript(app)
+    bs = Bootscript(app, logger)
     bs.set("10.0.0.1", "foo")
     assert bs.get("10.0.0.1") == "foo"
 
@@ -44,7 +47,7 @@ def test_get():
 def test_extra():
     app = Bottle()
     # ensure a new object does not contain entries
-    bs = Bootscript(app)
+    bs = Bootscript(app, logger)
     assert len(bs.bootscript) == 0
 
     inval = "fooinval"

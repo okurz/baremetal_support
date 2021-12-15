@@ -6,14 +6,17 @@ from pytest import raises
 import time
 
 from baremetal_support.lock import Host_Lock, HostAlreadyLocked, HostNotLocked
+from baremetal_support.logging import Logging
 
 host0 = "10.0.0.1"
 host1 = "10.0.0.2"
 
+logger = Logging("baremetal support", "DEBUG")
+
 
 def test_my_timer():
     app = Bottle()
-    locks = Host_Lock(app)
+    locks = Host_Lock(app, logger)
 
     assert not locks.is_locked(host0)
     token = locks.lock_host(host0, 6)
@@ -28,7 +31,7 @@ def test_my_timer():
 
 def test_is_locked():
     app = Bottle()
-    locks = Host_Lock(app)
+    locks = Host_Lock(app, logger)
 
     assert not locks.is_locked(host0)
     assert not locks.is_locked(host1)
@@ -54,14 +57,14 @@ def test_is_locked():
 
 def test_lock_host():
     app = Bottle()
-    locks = Host_Lock(app)
+    locks = Host_Lock(app, logger)
     locks.lock_host(host1)
     assert locks.locks[host1]
 
 
 def test_unlock_host():
     app = Bottle()
-    locks = Host_Lock(app)
+    locks = Host_Lock(app, logger)
     token = locks.lock_host(host1)
     assert locks.locks[host1]
     locks.unlock_host(host1, token)
@@ -70,7 +73,7 @@ def test_unlock_host():
 
 def test_lock_already_locked():
     app = Bottle()
-    locks = Host_Lock(app)
+    locks = Host_Lock(app, logger)
 
     assert not locks.is_locked(host0)
     token = locks.lock_host(host0)
@@ -88,7 +91,7 @@ def test_lock_already_locked():
 
 def test_unlock_unlocked():
     app = Bottle()
-    locks = Host_Lock(app)
+    locks = Host_Lock(app, logger)
 
     assert not locks.is_locked(host0)
     with raises(HostNotLocked):

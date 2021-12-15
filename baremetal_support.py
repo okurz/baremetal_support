@@ -2,6 +2,9 @@
 import argparse
 
 from baremetal_support.baremetal_support import Baremetal_Support
+from baremetal_support.logging import Logging
+
+
 
 if __name__ == "__main__":
     host = "0.0.0.0"
@@ -17,6 +20,8 @@ if __name__ == "__main__":
                         help="specify listening port - defaults to 8080")
     parser.add_argument("-i", "--instance",
                         help="specify openQA instance - defaults to http://openqa.suse.de")
+    parser.add_argument("-m", "--loglevel",
+                        help="Loglevel to use, one of DEBUG, INFO, WARNING, ERROR, CRITICAL, default is INFO")
 
     args = parser.parse_args()
 
@@ -29,5 +34,10 @@ if __name__ == "__main__":
     if args.instance:
         instance = args.instance
 
-    server = Baremetal_Support(host=host, port=port, instance=instance)
+    if args.loglevel:
+        logger = Logging("baremetal support", args.loglevel)
+    else:
+        logger = Logging("baremetal support", "INFO")
+
+    server = Baremetal_Support(host=host, port=port, logger=logger, instance=instance)
     server.start()
