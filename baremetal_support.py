@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# Copyright (C) 2019-2021 SUSE LLC
 import argparse
 
 from baremetal_support.baremetal_support import Baremetal_Support

@@ -1,4 +1,4 @@
-# Copyright (C) 2019 SUSE LLC
+# Copyright (C) 2019-2021 SUSE LLC
 # SPDX-License-Identifier: GPL-3.0
 import sys
 
