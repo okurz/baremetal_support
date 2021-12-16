@@ -1,0 +1,5 @@
+baremetal_support:
+  listen: "0.0.0.0"
+  port: 8080
+  openqa_instance: "https://openqa.suse.de"
+  loglevel: "INFO"
