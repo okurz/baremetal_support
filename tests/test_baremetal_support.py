@@ -1,4 +1,4 @@
-# Copyright (C) 2019 SUSE LLC
+# Copyright (C) 2019-2021 SUSE LLC
 # SPDX-License-Identifier: GPL-3.0
 import sys
 
@@ -13,12 +13,13 @@ from multiprocessing import Process
 from time import sleep
 
 from baremetal_support.baremetal_support import Baremetal_Support
+from baremetal_support.logging import Logging
 
 hostname = 'localhost'
 port = '23456'
 instance = "http://openqa.opensuse.org"
 url = 'http://' + hostname + ':' + port + '/v1/'
-
+logger = Logging("baremetal support", "DEBUG")
 
 def cleanup(*_):
     pytest_cov.embed.cleanup()
@@ -26,13 +27,13 @@ def cleanup(*_):
 
 
 def server_task():
-    server = Baremetal_Support(hostname, port, instance)
+    server = Baremetal_Support(hostname, port, logger, instance)
     signal.signal(signal.SIGTERM, cleanup)
     assert isinstance(server, Baremetal_Support)
     server.start()
 
 def test_baremetal_support_methods():
-    server = Baremetal_Support(hostname, port, instance)
+    server = Baremetal_Support(hostname, port, logger, instance)
     assert not server._bootscript._is_ip("foobar")
 
 def test_baremetal_support():
@@ -184,7 +185,7 @@ def test_online_required():
     url_jobid_good = url + 'latest_job/x86_64/opensuse/DVD/Tumbleweed/create_hdd_textmode'
     url_jobid_bad = url + 'latest_job/MIPS/Gentoo/hardened/1.0/install_foobar'
 
-    server = Baremetal_Support(hostname, port, instance)
+    server = Baremetal_Support(hostname, port, logger, instance)
     signal.signal(signal.SIGTERM, cleanup)
     assert isinstance(server, Baremetal_Support)
     p = Process(target=server_task, args=())

@@ -1,4 +1,4 @@
-# Copyright (C) 2019 SUSE LLC
+# Copyright (C) 2020-2021 SUSE LLC
 # SPDX-License-Identifier: GPL-3.0
 
 from bottle import Bottle
@@ -7,6 +7,9 @@ from pytest import raises
 import requests
 
 from baremetal_support.jobid import LatestJob, LatestJobNotFound
+from baremetal_support.logging import Logging
+
+logger = Logging("baremetal support", "DEBUG")
 
 
 def test_exception():
@@ -17,7 +20,7 @@ def test_exception():
         pytest.skip("instance unreachable")
 
     app = Bottle()
-    lj = LatestJob(app, instance)
+    lj = LatestJob(app, logger, instance)
 
     filter = {}
     filter['arch'] = 'MIPS'
@@ -37,7 +40,7 @@ def test_get():
         pytest.skip("instance unreachable")
 
     app = Bottle()
-    lj = LatestJob(app, instance)
+    lj = LatestJob(app, logger, instance)
     filter = {}
     filter['arch'] = 'x86_64'
     filter['distri'] = 'opensuse'
