@@ -5,3 +5,4 @@ requests>=2.21.0
 pycodestyle>=2.5.0
 codecov
 openqa_client
+cfg_load

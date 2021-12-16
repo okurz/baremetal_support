@@ -23,7 +23,7 @@ class Baremetal_Support:
         self._bootscript = Bootscript(self._app, self.log)
         self._locks = Host_Lock(self._app, self.log)
         self._latest_job = LatestJob(self._app, self.log, self._instance)
-        self.log.info("host=" + host + ", Port " + port)
+        self.log.info("host=" + host + ", Port " + str(port))
         self.log.info("using openQA instance " + instance)
         self._route()
 
