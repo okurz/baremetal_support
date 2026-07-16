@@ -1,6 +1,6 @@
 # A support service for baremetal testing 
-[![Build Status](https://travis-ci.com/frankenmichl/baremetal_support.svg?branch=master)](https://travis-ci.com/frankenmichl/baremetal_support)
-[![codecov](https://codecov.io/gh/frankenmichl/baremetal_support/branch/master/graph/badge.svg)](https://codecov.io/gh/frankenmichl/baremetal_support)
+[![Build Status](https://github.com/os-autoinst/baremetal_support/actions/workflows/test.yml/badge.svg)](https://github.com/os-autoinst/baremetal_support/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/os-autoinst/baremetal_support/branch/master/graph/badge.svg)](https://codecov.io/gh/os-autoinst/baremetal_support)
 
 # Finding Documentation
 
