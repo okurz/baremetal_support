@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0
 
 from bottle import Bottle
+import bottle
+from unittest.mock import patch
 import pytest
 from pytest import raises
 import requests
@@ -50,3 +52,20 @@ def test_get():
 
     res = lj.get_latest_job(filter)
     assert res
+
+
+def test_http_get_latest_job_success():
+    app = Bottle()
+    lj = LatestJob(app, logger)
+    with patch.object(lj, "get_latest_job", return_value={"id": "12345"}):
+        res = lj.http_get_latest_job("x86_64", "opensuse", "DVD", "Tumbleweed", "create_hdd_textmode")
+        assert res == "12345"
+        assert bottle.response.content_type == "text/text; charset=utf-8"
+
+
+def test_http_get_latest_job_not_found():
+    app = Bottle()
+    lj = LatestJob(app, logger)
+    with patch.object(lj, "get_latest_job", side_effect=LatestJobNotFound("no such job found")):
+        lj.http_get_latest_job("x86_64", "opensuse", "DVD", "Tumbleweed", "create_hdd_textmode")
+        assert bottle.response.status == "404 Not Found"

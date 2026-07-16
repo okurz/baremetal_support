@@ -9,6 +9,7 @@ import signal
 
 from multiprocessing import Process
 from time import sleep
+from unittest.mock import MagicMock
 
 from baremetal_support.baremetal_support import Baremetal_Support
 from baremetal_support.logging import Logging
@@ -201,3 +202,10 @@ def test_online_required():
     finally:
         p.terminate()
         p.join()
+
+
+def test_baremetal_support_start():
+    server = Baremetal_Support(hostname, port, logger, instance)
+    server._app.run = MagicMock()
+    server.start()
+    server._app.run.assert_called_once_with(host=hostname, port=port, debug=True)

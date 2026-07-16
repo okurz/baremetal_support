@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0
 
 from bottle import Bottle
+import bottle
+import io
 from pytest import raises
 
 from baremetal_support.bootscript import Bootscript, BootscriptNotFound
@@ -54,3 +56,43 @@ def test_extra():
     with raises(BootscriptNotFound):
         inval = bs.get("10.0.0.1")
     assert inval == "fooinval"
+
+
+def test_http_get_bootscript_for_peer():
+    app = Bottle()
+    bs = Bootscript(app, logger)
+    bs.set("10.0.0.1", "foo")
+    bottle.request.environ["REMOTE_ADDR"] = "10.0.0.1"
+    res = bs.http_get_bootscript_for_peer()
+    assert res == "foo"
+
+
+def test_http_get_bootscript_invalid_ip():
+    app = Bottle()
+    bs = Bootscript(app, logger)
+    bs.http_get_bootscript("invalid_ip")
+    assert "400" in bottle.response.status
+
+
+def test_http_get_bootscript_not_found():
+    app = Bottle()
+    bs = Bootscript(app, logger)
+    res = bs.http_get_bootscript("10.0.0.2")
+    assert "404" in res.status
+
+
+def test_http_set_bootscript():
+    app = Bottle()
+    bs = Bootscript(app, logger)
+    bottle.request.environ["wsgi.input"] = io.BytesIO(b"my_custom_script")
+    bottle.request.environ["CONTENT_LENGTH"] = str(len(b"my_custom_script"))
+    bs.http_set_bootscript("10.0.0.3")
+    assert bs.get("10.0.0.3") == "my_custom_script"
+    assert "200" in bottle.response.status
+
+
+def test_http_set_bootscript_invalid():
+    app = Bottle()
+    bs = Bootscript(app, logger)
+    bs.http_set_bootscript("invalid_ip")
+    assert "400" in bottle.response.status
