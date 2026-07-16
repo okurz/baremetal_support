@@ -2,13 +2,13 @@ SOURCE_FILES ?= $(shell git ls-files "**.py")
 ISOLATE ?= 1
 
 ifeq ($(ISOLATE),1)
-UNSHARE := unshare -r -n
+UNSHARE := unshare -r -n sh -c 'ip link set lo up && "$$0" "$$@"'
 else
 UNSHARE :=
 endif
 
 # Override to use uv, e.g. PYTHON_RUN="uv run"
-PYTHON_RUN ?=
+PYTHON_RUN ?= $(shell command -v uv >/dev/null 2>&1 && echo "uv run" || echo "")
 
 .PHONY: help
 help: ## Display this help
