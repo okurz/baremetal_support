@@ -4,15 +4,15 @@
 
 # Finding Documentation
 
-Find all documentation [in the Wiki](https://github.com/frankenmichl/baremetal_support/wiki)
+Find all documentation [in the Wiki](https://github.com/os-autoinst/baremetal_support/wiki)
 
-[Installation](https://github.com/frankenmichl/baremetal_support/wiki/Installation)
+[Installation](https://github.com/os-autoinst/baremetal_support/wiki/Installation)
 
-[Running](https://github.com/frankenmichl/baremetal_support/wiki/Running)
+[Running](https://github.com/os-autoinst/baremetal_support/wiki/Running)
 
-[API Documentation](https://github.com/frankenmichl/baremetal_support/wiki/API-Documentation)
+[API Documentation](https://github.com/os-autoinst/baremetal_support/wiki/API-Documentation)
 
-[Unit Tests](https://github.com/frankenmichl/baremetal_support/wiki/Unit-Tests)
+[Unit Tests](https://github.com/os-autoinst/baremetal_support/wiki/Unit-Tests)
 
 # Contributing
 Any contribution is highly appreciated!
