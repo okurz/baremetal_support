@@ -1,4 +1,46 @@
----
 merge_queue:
-  status_comments: none
+  max_parallel_checks: 1
   queue_controls_comment: false
+
+queue_rules:
+  - name: default
+    batch_size: 1
+
+pull_request_rules:
+  - name: automatic merge
+    conditions:
+      - and: &base_checks
+        - base=main
+        - -label~=^acceptance-tests-needed|not-ready
+        - "#check-failure=0"
+        - "#check-pending=0"
+        - linear-history
+      - and:
+        - "#approved-reviews-by>=2"
+        - "#changes-requested-reviews-by=0"
+        # https://doc.mergify.io/examples.html#require-all-requested-reviews-to-be-approved
+        - "#review-requested=0"
+    actions: &merge
+      merge:
+        method: fast-forward
+  - name: automatic merge on special label
+    conditions:
+      - and: *base_checks
+      - and:
+          - "label=merge-fast"
+    actions: *merge
+  - name: automatic merge for dependabot updates
+    conditions:
+      - and: *base_checks
+      - and:
+          - author=dependabot[bot]
+    actions:
+      queue:
+      merge:
+        method: squash
+  - name: continuously rebase pull requests when it's labeled with `rebase`
+    conditions:
+      - label=rebase
+    actions:
+      rebase:
+        bot_account: suse-qe-tools-mergify
